@@ -9,6 +9,7 @@ packages = [{include = "python_proto_generator"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+protobuf = "^4.23.1"
 
 
 [build-system]
