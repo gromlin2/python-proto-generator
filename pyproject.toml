@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "python-proto-generator"
+version = "0.1.0"
+description = "An example protoc plugin written in python"
+authors = ["David Grömling"]
+license = "Apache 2.0"
+readme = "README.md"
+packages = [{include = "python_proto_generator"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
