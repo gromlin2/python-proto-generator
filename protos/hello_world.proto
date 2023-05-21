@@ -1,0 +1,40 @@
+/* A protobuf to say hello to the world*/
+syntax = "proto3";
+
+package gromlin2.howtogenerate;
+
+/*A hello to send to a planet*/
+message HelloPlanet {
+  /*A message you want to send.*/
+  string message = 1;
+
+  /*The planet, you want to send the message to.*/
+  string planet = 2;
+
+  bool be_friendly = 3;
+}
+
+message DebtsAtPlanet {
+    uint32 amount_of_cash_carried = 1;
+    int32 amount_of_debt = 2;
+}
+
+message SpaceShip {
+    uint64 max_speed = 1;
+    int64 warp_energy = 2;
+}
+
+message ByePlanet {
+  enum GoodByeReaction {
+    UNKNOWN = 0;
+    NEVER_COME_BACK = 1;
+    ALWAYS_WELCOME = 2;
+  }
+
+  /*Reaction, of the planet to the visit*/
+  GoodByeReaction reaction = 1;
+}
+
+service InterplantaryCommunication {
+  rpc CallHome(HelloPlanet) returns (ByePlanet) {}
+}
