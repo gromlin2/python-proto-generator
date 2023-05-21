@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+/* A message to the world */
+message HelloWorldRequest {
+  string message = 1;
+}
+
+/* A message how the world responds */
+message HelloWorldResponse {
+  string response = 1;
+}
+
+/* A service to enable communication with the world */
+service HelloWorld {
+  rpc SayHello(HelloWorldRequest) returns (HelloWorldResponse) {}
+}
