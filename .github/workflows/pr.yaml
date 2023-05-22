@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  buildAndTest:
-    name: Build and test app
+  helloWorld:
+    name: Build and test hello world
     runs-on: ubuntu-22.04
     timeout-minutes: 5
 
@@ -31,4 +31,30 @@ jobs:
 
       - name: Test hello-world
         working-directory: hello_world_generator/test
+        run: pytest --verbose
+
+  protoSummaries:
+    name: Build and test summary generator
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+        with:
+          version: '3.x'
+
+      - name: Install summarizer dependencies
+        working-directory: proto_summarizer
+        run: pip install -r requirements.txt
+
+      - name: Test summarizer
+        working-directory: proto_summarizer
         run: pytest --verbose
