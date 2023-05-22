@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package solar_system.mars;
+
+import 'google/protobuf/timestamp.proto';
+import 'google/protobuf/duration.proto';
+import 'solar_system/mars/marsians.proto';
+
+
+message ConductResearchRequest {
+  MarsStation on_station = 1;
+  google.protobuf.Timestamp at = 2;
+  string reseach_instructions = 3;
+}
+
+message ConductResearchRepsonse {
+  google.protobuf.Duration required_time = 1;
+}
+
+message GetLocationsRequest {
+  repeated MarsStation.StationType type = 1;
+}
+
+message GetLocationsResponse {
+  repeated MarsStation.Location locations = 1;
+}
+
+/* A service that lets you run some research. */
+service ResearchService {
+
+  /* Conduct research on a space station. */
+  rpc ConductResearch(ConductResearchRequest) returns (ConductResearchRepsonse);
+
+  /* Check which stations are currently in reach to receive research requests. */
+  rpc CheckStationsInReach(GetLocationsRequest) returns (GetLocationsResponse);
+}
+
+message SupportResidentRequest{
+  Marsian resident = 1;
+}
+
+message SupportResidentResponse{}
+
+/* Provides services for residents. */
+service ResidentServices {
+  rpc SupportResidents(SupportResidentRequest) returns (SupportResidentResponse);
+}

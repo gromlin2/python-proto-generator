@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package solar_system.mars;
+
+/* Describes a life-form living on Mars. */
+message Marsian {
+  string name = 1;
+  Species species = 2;
+  Marsian spouse = 3;
+  repeated Marsian children = 4;
+}
+
+/* Different species known to life on Mars. */
+enum Species {
+  UNKNOWN = 0;
+  ALIEN = 1;
+  PREDATOR = 2;
+  DROID = 3;
+}
+
+/* A space-station orbiting Mars. */
+message MarsStation {
+
+  enum StationType {
+    UNKNOWN = 0;
+    RESIDENTIAL = 1;
+    RESEARCH = 2;
+    MILITARY = 3;
+  }
+
+  /* Represents the current location of a MarsStation in relation to Mars. */
+  message Location {
+    double distance_from_surface = 1;
+    double azimuth = 2;
+    double altitude = 3;
+  }
+
+  StationType station_type = 1;
+  repeated Marsian crew = 2;
+}
