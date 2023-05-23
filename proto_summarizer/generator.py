@@ -41,6 +41,41 @@ def package_string(package_name: str) -> str:
         else 'not defined, consider adding "package [name]" to your proto'
     )
 
+def pretty_path(path: str) -> str:
+    return path.replace("/", " &gt; ")
+
+def style() -> str:
+    return """
+    body {
+      background-color: #161b24;
+      font-family: sans-serif;
+      color: #e9ecf2;
+      line-height: 1.6;
+    }
+
+    h1 {
+      color: #6ef093;
+    }
+
+    ul {
+      list-style-type: none;
+    }
+
+    li {
+      display:inline-block;
+      background-color: #57e6e6;
+      color: black;
+      border-radius: 25px;
+      width: fit-content;
+      padding: 20px;
+      margin: 10px;
+    }
+
+    .package {
+      color: orange;
+    }
+    """
+
 
 def generate_for_proto(
     file_descriptor: FileDescriptorProto,
@@ -54,22 +89,32 @@ def generate_for_proto(
     service_count = count_services(file_descriptor)
     method_count = count_methods(file_descriptor)
 
+    path = pretty_path(file_descriptor.name)
+
     content = f"""
-    <h1>Summary of {file_descriptor.name}</h1>
-    Nice protobuf you defined there using {file_descriptor.syntax} syntax.<br />
-    Its package is {package_string(file_descriptor.package)}. <br />
-    It is importing {count_string(dependency_count)} other protobuf{plural_s(dependency_count)}. <br />
-    <br />
-    {file_descriptor.name} contains
-    <ul>
-      <li>{count_string(message_count)} message{plural_s(message_count)}</li>
-      <li>{count_string(enum_count)} enum{plural_s(enum_count)}</li>
-      <li>{count_string(service_count)} service{plural_s(service_count)}</li>
-      <li>{count_string(method_count, "method")} method{plural_s(message_count)}</li>
-    </ul>
+    <html>
+      <head>
+        <style>{style()}</style>
+        <title>{pretty_path(file_descriptor.name.replace(".proto", ""))}</title>
+      </head>
+      <body>
+        <h1>Summary of <br/> {path}</h1>
+        Nice protobuf you defined there using {file_descriptor.syntax} syntax. &#9989;<br />
+        Its package name is <span class="package">{package_string(file_descriptor.package)}</span>. <br />
+        It is importing {count_string(dependency_count)} other protobuf{plural_s(dependency_count)}. <br />
+        <br />
+        {path} contains
+        <ul>
+          <li><span class="count">{count_string(message_count)}</span> message{plural_s(message_count)}</li>
+          <li><span class="count">{count_string(enum_count)}</span> enum{plural_s(enum_count)}</li>
+          <li><span class="count">{count_string(service_count)}</span> service{plural_s(service_count)}</li>
+          <li><span class="count">{count_string(method_count, "method")}</span> method{plural_s(message_count)}</li>
+        </ul>
+      </body>
+    </html>
     """
 
-    file.content = bs(content, features="html.parser").prettify()
+    file.content = bs(content, features="html.parser").prettify(encoding='ascii')
 
     return file
 
