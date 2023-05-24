@@ -28,6 +28,14 @@ def test_messages_embedded():
     assert count_messages(fd) == 4
 
 
+def test_messages_deeply_embedded():
+    fd = FileDescriptorProto()
+    fd.message_type.add()
+    message_with_embedded = fd.message_type.add()
+    message_with_embedded.nested_type.add().nested_type.add().nested_type.add()
+    assert count_messages(fd) == 5
+
+
 def test_enums():
     fd = FileDescriptorProto()
     fd.enum_type.add()
@@ -42,6 +50,15 @@ def test_embedded_enums():
     message_with_embedded = fd.message_type.add()
     message_with_embedded.enum_type.add()
     message_with_embedded.enum_type.add()
+    assert count_enums(fd) == 2
+
+
+def test_multilayer_embedded_enums():
+    fd = FileDescriptorProto()
+    message = fd.message_type.add()
+    nested_message = message.nested_type.add()
+    nested_message.enum_type.add()
+    nested_message.nested_type.add().enum_type.add()
     assert count_enums(fd) == 2
 
 
