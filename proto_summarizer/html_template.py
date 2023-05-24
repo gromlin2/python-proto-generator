@@ -2,6 +2,10 @@ from textwrap import dedent
 from typing import Optional
 from bs4 import BeautifulSoup as bs
 
+CHECK = "&#9989;"
+CROSS = "&#10060;"
+INFO = "&#8505;"
+
 
 def pretty_path(path: str) -> str:
     """Converts a path like a/b/c into a > b > c"""
@@ -69,9 +73,13 @@ def render(
           </head>
           <body>
             <h1>Summary of <br/> {pretty_path(proto_path)}</h1>
-            Nice protobuf you defined there using {syntax} syntax. &#9989;<br />
-            Its package name is <span class="package">{package_name if package_name else 'not defined, consider adding "package [name]" to your proto'}</span>.<br />
-            It is importing {zero_as_no(dependency_count)} other protobuf{plural_s(dependency_count)}.<br />
+            {CHECK} Nice protobuf you defined there using {syntax} syntax. <br />
+
+            {CHECK if package_name else CROSS}
+            Its package name is <span class="package">{package_name if package_name else 'NOT DEFINED'}</span>.
+            {'' if package_name else 'Consider adding "package [name]" to your proto.'}<br />
+
+            {INFO} It is importing {zero_as_no(dependency_count)} other protobuf{plural_s(dependency_count)}.<br />
             <br />
             {pretty_path(proto_path)} contains
             <ul>
