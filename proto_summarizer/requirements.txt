@@ -4,3 +4,6 @@ protobuf>=4.23.1
 # Tests
 pytest>=7.3.1
 GitPython>=3.1.31
+
+# Code-Format and Lint
+black>=23.3.0

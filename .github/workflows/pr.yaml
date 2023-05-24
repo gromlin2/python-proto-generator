@@ -29,6 +29,10 @@ jobs:
         working-directory: hello_world_generator
         run: pip install -r requirements.txt
 
+      - name: Check formatting
+        working-directory: hello_world_generator
+        run: black --check ./
+
       - name: Test hello-world
         working-directory: hello_world_generator/test
         run: pytest --verbose
@@ -54,6 +58,10 @@ jobs:
       - name: Install summarizer dependencies
         working-directory: proto_summarizer
         run: pip install -r requirements.txt
+
+      - name: Check formatting
+        working-directory: hello_world_generator
+        run: black --check ./
 
       - name: Test summarizer
         working-directory: proto_summarizer
