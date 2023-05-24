@@ -41,8 +41,10 @@ def package_string(package_name: str) -> str:
         else 'not defined, consider adding "package [name]" to your proto'
     )
 
+
 def pretty_path(path: str) -> str:
     return path.replace("/", " &gt; ")
+
 
 def style() -> str:
     return """
@@ -114,7 +116,7 @@ def generate_for_proto(
     </html>
     """
 
-    file.content = bs(content, features="html.parser").prettify(encoding='ascii')
+    file.content = bs(content, features="html.parser").prettify(encoding="ascii")
 
     return file
 
