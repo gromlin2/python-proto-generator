@@ -2,17 +2,16 @@
 
 import logging
 import sys
-from bs4 import BeautifulSoup as bs
 
 from google.protobuf.compiler.plugin_pb2 import (
     CodeGeneratorResponse,
     CodeGeneratorRequest,
 )
-
 from google.protobuf.descriptor_pb2 import (
     FileDescriptorProto,
 )
 
+import html_template
 from descriptor_counters import (
     count_messages,
     count_enums,
@@ -26,64 +25,12 @@ logging.basicConfig(
 )
 
 
-def count_string(count: int, reasons="unset") -> str:
-    return "NO" if count == 0 else f"{count}"
-
-
-def plural_s(count: int) -> str:
-    return "" if count == 1 else "s"
-
-
-def package_string(package_name: str) -> str:
-    return (
-        package_name
-        if package_name
-        else 'not defined, consider adding "package [name]" to your proto'
-    )
-
-
-def pretty_path(path: str) -> str:
-    return path.replace("/", " &gt; ")
-
-
-def style() -> str:
-    return """
-    body {
-      background-color: #161b24;
-      font-family: sans-serif;
-      color: #e9ecf2;
-      line-height: 1.6;
-    }
-
-    h1 {
-      color: #6ef093;
-    }
-
-    ul {
-      list-style-type: none;
-    }
-
-    li {
-      display:inline-block;
-      background-color: #57e6e6;
-      color: black;
-      border-radius: 25px;
-      width: fit-content;
-      padding: 20px;
-      margin: 10px;
-    }
-
-    .package {
-      color: orange;
-    }
-    """
-
-
 def generate_for_proto(
     file_descriptor: FileDescriptorProto,
 ) -> CodeGeneratorResponse.File:
-    file = CodeGeneratorResponse.File()
-    file.name = file_descriptor.name.replace(".proto", ".html")
+    """Generates code for one specific proto-file"""
+    generated_file = CodeGeneratorResponse.File()
+    generated_file.name = file_descriptor.name.replace(".proto", ".html")
 
     dependency_count = len(file_descriptor.dependency)
     message_count = count_messages(file_descriptor)
@@ -91,34 +38,18 @@ def generate_for_proto(
     service_count = count_services(file_descriptor)
     method_count = count_methods(file_descriptor)
 
-    path = pretty_path(file_descriptor.name)
+    generated_file.content = html_template.render(
+        proto_path=file_descriptor.name,
+        syntax=file_descriptor.syntax,
+        package_name=file_descriptor.package,
+        dependency_count=dependency_count,
+        message_count=message_count,
+        enum_count=enum_count,
+        service_count=service_count,
+        method_count=method_count,
+    )
 
-    content = f"""
-    <html>
-      <head>
-        <style>{style()}</style>
-        <title>{pretty_path(file_descriptor.name.replace(".proto", ""))}</title>
-      </head>
-      <body>
-        <h1>Summary of <br/> {path}</h1>
-        Nice protobuf you defined there using {file_descriptor.syntax} syntax. &#9989;<br />
-        Its package name is <span class="package">{package_string(file_descriptor.package)}</span>. <br />
-        It is importing {count_string(dependency_count)} other protobuf{plural_s(dependency_count)}. <br />
-        <br />
-        {path} contains
-        <ul>
-          <li><span class="count">{count_string(message_count)}</span> message{plural_s(message_count)}</li>
-          <li><span class="count">{count_string(enum_count)}</span> enum{plural_s(enum_count)}</li>
-          <li><span class="count">{count_string(service_count)}</span> service{plural_s(service_count)}</li>
-          <li><span class="count">{count_string(method_count, "method")}</span> method{plural_s(message_count)}</li>
-        </ul>
-      </body>
-    </html>
-    """
-
-    file.content = bs(content, features="html.parser").prettify(encoding="ascii")
-
-    return file
+    return generated_file
 
 
 if __name__ == "__main__":
