@@ -1,3 +1,4 @@
+from textwrap import dedent
 from typing import Optional
 from bs4 import BeautifulSoup as bs
 
@@ -29,7 +30,8 @@ def render(
     method_count: int,
 ) -> str:
     """Renders html-code for the given proto-data"""
-    rendered = f"""
+    rendered = dedent(
+        f"""
         <html>
           <head>
             <style>
@@ -81,5 +83,6 @@ def render(
           </body>
         </html>
         """
+    )
 
     return bs(rendered, features="html.parser").prettify(encoding="ascii")
